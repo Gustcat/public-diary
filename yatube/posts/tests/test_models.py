@@ -33,15 +33,11 @@ class PostModelTest(TestCase):
 
     def test_models_have_correct_object_names(self):
         """Проверяем, что у моделей корректно работает __str__."""
-        group = self.group
-        post = self.post
-        comment = self.comment
-        follow = self.follow
         str_models = {
-            post: self.post.text[:15],
-            group: self.group.title,
-            comment: self.comment.text[:15],
-            follow: f'{self.follow.user} -> {self.follow.author}'
+            self.post: self.post.text[:15],
+            self.group: self.group.title,
+            self.comment: self.comment.text[:15],
+            self.follow: f'{self.follow.user} -> {self.follow.author}'
         }
         for model, expected_value in str_models.items():
             with self.subTest(model=model):

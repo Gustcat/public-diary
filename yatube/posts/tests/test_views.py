@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
@@ -164,16 +165,23 @@ class PostPageTests(TestCase):
         content_after = response_after.content
         self.assertEqual(content_before, content_after)
 
-    def test_authorized_client_can_follow_and_unfollow(self):
+    def test_authorized_client_can_follow(self):
         """Авторизованный пользователь может подписаться
-        и отписаться от другого пользователя"""
+        на другого пользователя"""
         self.authorized_client.get(reverse(
             'posts:profile_follow', kwargs={'username': self.user2.username}))
         follow = Follow.objects.filter(author=self.user2, user=self.user)
         self.assertTrue(follow.exists())
+
+    def test_authorized_client_can_unfollow(self):
+        """Авторизованный пользователь может отписаться
+        от другого пользователя"""
+        follow, _ = Follow.objects.get_or_create(author=self.user2,
+                                                 user=self.user)
         self.authorized_client.get(reverse(
             'posts:profile_unfollow', kwargs={'username':
                                               self.user2.username}))
+        follow = Follow.objects.filter(author=self.user2, user=self.user)
         self.assertFalse(follow.exists())
 
     def test_new_following_visible_only_in_follower_feed(self):
